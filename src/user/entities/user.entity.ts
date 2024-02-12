@@ -24,6 +24,7 @@ export class User extends BaseEntity {
 
   // 유저 닉네임
   @Column()
+  @ApiProperty()
   public nickname: string;
 
   // 유저 휴대폰번호
