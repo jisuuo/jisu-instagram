@@ -3,6 +3,8 @@ import { BeforeInsert, Column, Entity } from 'typeorm';
 import { ApiProperty, ApiTags } from '@nestjs/swagger';
 import { ProviderEnum } from './provider.enum';
 import * as bcrypt from 'bcryptjs';
+import * as gravatar from 'gravatar';
+import { InternalServerErrorException } from '@nestjs/common';
 
 @Entity()
 @ApiTags('UserEntity')
@@ -24,10 +26,28 @@ export class User extends BaseEntity {
   @ApiProperty()
   public password: string;
 
+  @Column()
+  @ApiProperty()
+  public profileImg: string;
+
   @BeforeInsert()
-  async hashPassword() {
-    const saltValue = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, saltValue);
+  async processUserCredentials() {
+    try {
+      if (ProviderEnum.LOCAL !== this.provider) {
+        return;
+      }
+      // 이메일 가입자 인 경우 기본 프로필 이미지 저장
+      this.profileImg = gravatar.url(this.email, {
+        s: '200',
+        r: 'pg',
+        d: 'mm',
+        protocol: 'https',
+      });
+      const saltValue = await bcrypt.genSalt(10);
+      this.password = await bcrypt.hash(this.password, saltValue);
+    } catch (err) {
+      throw new InternalServerErrorException();
+    }
   }
 
   // 유저 닉네임
