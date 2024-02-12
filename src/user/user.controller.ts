@@ -12,7 +12,7 @@ import { User } from './entities/user.entity';
 import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('user')
-@ApiTags('유저 API')
+@ApiTags('User')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
