@@ -68,4 +68,13 @@ export class User extends BaseEntity {
   })
   @ApiProperty()
   public provider: ProviderEnum;
+
+  async checkPassword(inputPassword: string): Promise<boolean> {
+    try {
+      return await bcrypt.compare(inputPassword, this.password);
+    } catch (err) {
+      console.log(err);
+      throw new InternalServerErrorException();
+    }
+  }
 }

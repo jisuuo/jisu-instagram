@@ -7,7 +7,12 @@ import {
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiCreatedResponse,
+  ApiOperation,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger';
 import { User } from './entities/user.entity';
 import { FileInterceptor } from '@nestjs/platform-express';
 
@@ -26,8 +31,8 @@ export class UserController {
   @Post('upload-profileImg')
   @ApiOperation({
     summary: '유저 프로필 이미지 업로드',
-    description: '유저 프로필 수정',
   })
+  @ApiParam({ name: 'file', required: true, description: '파일' })
   @ApiCreatedResponse({ description: '유저 프로필 이미지 업로드' })
   @UseInterceptors(FileInterceptor('file'))
   async uploadProfileImg(@UploadedFile() file: Express.Multer.File) {
