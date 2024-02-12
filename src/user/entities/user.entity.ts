@@ -1,9 +1,10 @@
 import { BaseEntity } from '../../common/base.entity';
 import { Column, Entity } from 'typeorm';
 import { ApiProperty, ApiTags } from '@nestjs/swagger';
+import { ProviderEnum } from './provider.enum';
 
 @Entity()
-@ApiTags('User')
+@ApiTags('UserEntity')
 export class User extends BaseEntity {
   // 유저 가입 이메일
   @Column({
@@ -31,4 +32,13 @@ export class User extends BaseEntity {
   @Column()
   @ApiProperty()
   public phone: string;
+
+  // 유저 가입경로 [이메일, 구글, 카카오, 네이버]
+  @Column({
+    type: 'enum',
+    enum: ProviderEnum,
+    default: ProviderEnum.LOCAL,
+  })
+  @ApiProperty()
+  public provider: ProviderEnum;
 }
