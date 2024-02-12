@@ -6,6 +6,9 @@ import { SwaggerModule } from '@nestjs/swagger';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  // api url prefix 설정
+  app.setGlobalPrefix('api');
+
   // Swagger 설정
   const config = new BaseAPIDocument().initializeOptions();
   const documents = SwaggerModule.createDocument(app, config);
