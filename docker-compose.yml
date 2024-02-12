@@ -1,5 +1,22 @@
 version: "3"
 services:
+  jisu_api:
+    build:
+      dockerfile: Dockerfile
+      context: .
+      target: development
+    volumes:
+      - .:/usr/src/app
+    env_file:
+      - .env
+    command: npm run start:dev
+    ports:
+      - '8000:8000'
+    depends_on:
+      - postgres
+    networks:
+      - jisu-network
+
   postgres:
     container_name: postgres
     image: postgres:latest
@@ -7,3 +24,10 @@ services:
       - "5432:5432"
     env_file:
       - docker.env
+    networks:
+      - jisu-network
+
+networks:
+  jisu-network:
+    driver: bridge
+
