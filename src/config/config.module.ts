@@ -13,6 +13,9 @@ import { ConfigModule } from '@nestjs/config';
         POSTGRES_USER: Joi.string().required(),
         POSTGRES_PASSWORD: Joi.string().required(),
         POSTGRES_DB: Joi.string().required(),
+
+        // Multer 설정 [파일 업로드]
+        ATTACH_SAVE_PATH: Joi.string().required(),
       }),
     }),
   ],
