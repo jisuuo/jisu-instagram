@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { ProviderEnum } from '../entities/provider.enum';
 
 export class CreateUserDto {
   // 유저 이메일
@@ -20,4 +21,8 @@ export class CreateUserDto {
   // 유저 휴대폰번호
   @ApiProperty()
   phone: string;
+
+  // 유저 가입경로
+  @ApiProperty()
+  provider?: ProviderEnum = ProviderEnum.LOCAL;
 }
