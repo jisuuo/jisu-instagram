@@ -26,7 +26,9 @@ export class User extends BaseEntity {
   @ApiProperty()
   public password: string;
 
-  @Column()
+  @Column({
+    nullable: true,
+  })
   @ApiProperty()
   public profileImg: string;
 
@@ -43,8 +45,6 @@ export class User extends BaseEntity {
         d: 'mm',
         protocol: 'https',
       });
-      const saltValue = await bcrypt.genSalt(10);
-      this.password = await bcrypt.hash(this.password, saltValue);
     } catch (err) {
       throw new InternalServerErrorException();
     }

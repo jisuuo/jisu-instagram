@@ -16,6 +16,8 @@ import { ConfigModule } from '@nestjs/config';
 
         // Multer 설정 [파일 업로드]
         ATTACH_SAVE_PATH: Joi.string().required(),
+
+        JWT_SECRET_KEY: Joi.string().required(),
       }),
     }),
   ],
