@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import { CreateUserDto } from '../user/dto/create-user.dto';
 import { ProviderEnum } from '../user/entities/provider.enum';
@@ -6,6 +10,7 @@ import { JwtService } from '@nestjs/jwt';
 import { User } from '../user/entities/user.entity';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcryptjs';
+import { LoginUserDto } from './dto/login-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -185,6 +190,15 @@ export class AuthService {
       accessToken: this.signToken(user, false),
       refreshToken: this.signToken(user, true),
     };
+  }
+
+  // 유저 로그인
+  async loginUsers(loginUserDto: LoginUserDto) {
+    const user = await this.userService.validateEmail(loginUserDto.email);
+    if (!user) {
+      throw new NotFoundException('유저가 없습니다');
+    }
+    return user;
   }
 
   async authenticateWithEmailAndPassword(
