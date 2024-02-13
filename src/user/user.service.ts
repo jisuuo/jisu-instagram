@@ -1,5 +1,7 @@
 import {
   BadRequestException,
+  HttpException,
+  HttpStatus,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -8,6 +10,7 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { ProviderEnum } from './entities/provider.enum';
+import { CreateSocialUserDto } from './dto/create-social-user.dto';
 
 @Injectable()
 export class UserService {
@@ -48,6 +51,12 @@ export class UserService {
     return newUser;
   }
 
+  async createSocialUser(socialUserDto: CreateSocialUserDto) {
+    const newUser = await this.userRepository.create(socialUserDto);
+    await this.userRepository.save(newUser);
+    return newUser;
+  }
+
   // 유저 이메일 유무 확인
   async validateEmail(email: string) {
     const existUser = await this.userRepository.findOneBy({ email });
@@ -76,5 +85,11 @@ export class UserService {
         email,
       },
     });
+  }
+
+  async getUserById(userId: string) {
+    const user = await this.userRepository.findOneBy({ id: userId });
+    if (user) return user;
+    throw new HttpException('Not found', HttpStatus.NOT_FOUND);
   }
 }

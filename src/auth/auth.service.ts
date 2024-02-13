@@ -186,7 +186,9 @@ export class AuthService {
   }
 
   async loginUser(user: Pick<User, 'email' | 'id'>) {
+    const existingUser = await this.userService.getUserByEmail(user.email);
     return {
+      user: existingUser,
       accessToken: this.signToken(user, false),
       refreshToken: this.signToken(user, true),
     };

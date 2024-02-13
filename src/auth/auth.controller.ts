@@ -5,6 +5,8 @@ import {
   Post,
   Headers,
   UseGuards,
+  HttpStatus,
+  Req,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import {
@@ -15,10 +17,9 @@ import {
 } from '@nestjs/swagger';
 import { CreateUserDto } from '../user/dto/create-user.dto';
 import { BasicTokenGuard } from './guard/basic-token.guard';
-import {
-  AccessTokenGuard,
-  RefreshTokenGuard,
-} from './guard/bearer-token.guard';
+import { RefreshTokenGuard } from './guard/bearer-token.guard';
+import { GoogleUserGuard } from './guard/google-user.guard';
+import { RequestUser } from './interface/request-user.interface';
 
 @Controller('auth')
 @ApiTags('Auth')
@@ -96,5 +97,17 @@ export class AuthController {
   })
   async getUser(@Body('userId') userId: string) {
     return await this.authService.getUser(userId);
+  }
+  @Get('login/google')
+  @UseGuards(GoogleUserGuard)
+  async googleLogin() {
+    return HttpStatus.OK;
+  }
+
+  @Get('google/callback')
+  @UseGuards(GoogleUserGuard)
+  async googleLoginCallback(@Req() req: RequestUser) {
+    const { user } = req;
+    return user;
   }
 }
