@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Headers } from '@nestjs/common';
+import { Body, Controller, Get, Post, Headers, UsePipes } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import {
   ApiCreatedResponse,
@@ -7,6 +7,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { CreateUserDto } from '../user/dto/create-user.dto';
+import { PasswordPipe } from './pipe/password.pipe';
 
 @Controller('auth')
 @ApiTags('Auth')
@@ -69,7 +70,7 @@ export class AuthController {
   // 유저 프로필 가져오기 [1명, by userId]
   @Get()
   @ApiOperation({
-    summary: '유저 프로필 가져오기',
+    summary: '유저 정보 가져오기',
   })
   @ApiParam({
     name: 'userID',
@@ -77,7 +78,7 @@ export class AuthController {
     description: '유저 아이디',
   })
   @ApiCreatedResponse({
-    description: '유저 프로필 가져오기',
+    description: '유저 정보 가져오기',
   })
   async getUser(@Body('userId') userId: string) {
     return await this.authService.getUser(userId);

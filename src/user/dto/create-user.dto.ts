@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { ProviderEnum } from '../entities/provider.enum';
+import { PasswordPipe } from '../../auth/pipe/password.pipe';
 
 export class CreateUserDto {
   // 유저 이메일
