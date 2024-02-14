@@ -11,6 +11,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { ProviderEnum } from './entities/provider.enum';
 import { CreateSocialUserDto } from './dto/create-social-user.dto';
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class UserService {
@@ -85,6 +86,27 @@ export class UserService {
         email,
       },
     });
+  }
+
+  async getUserByEmails(email: string) {
+    const user = await this.userRepository.findOneBy({ email });
+    if (user) return user;
+    throw new HttpException('Not found', HttpStatus.NOT_FOUND);
+  }
+
+  // 비밀번호 변경
+  async changePassword(userId: string, confirmPassword: string) {
+    const user = await this.userRepository.findOneBy({ id: userId });
+
+    const saltValue = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(confirmPassword, saltValue);
+
+    await this.userRepository.update(
+      { id: userId },
+      { password: user.password },
+    );
+    const updateUser = await this.userRepository.findOneBy({ id: userId });
+    return updateUser;
   }
 
   async getUserById(userId: string) {

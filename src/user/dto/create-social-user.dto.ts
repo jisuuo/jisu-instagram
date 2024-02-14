@@ -6,7 +6,7 @@ export class CreateSocialUserDto {
   @IsString()
   @IsNotEmpty()
   @ApiProperty()
-  username: string;
+  name: string;
 
   @IsEmail()
   @ApiProperty()

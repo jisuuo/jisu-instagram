@@ -20,6 +20,8 @@ import { BasicTokenGuard } from './guard/basic-token.guard';
 import { RefreshTokenGuard } from './guard/bearer-token.guard';
 import { GoogleUserGuard } from './guard/google-user.guard';
 import { RequestUser } from './interface/request-user.interface';
+import { ChangePasswordDto } from './dto/change-password.dto';
+import { use } from 'passport';
 
 @Controller('auth')
 @ApiTags('Auth')
@@ -108,6 +110,15 @@ export class AuthController {
   @UseGuards(GoogleUserGuard)
   async googleLoginCallback(@Req() req: RequestUser) {
     const { user } = req;
-    return user;
+    const token = await this.authService.loginUser(user);
+    return token;
+  }
+
+  @Post('change-password')
+  async ChangeNewPassword(
+    @Body('email') email: string,
+    @Body() changePasswordDto: ChangePasswordDto,
+  ) {
+    return await this.authService.changePassword(email, changePasswordDto);
   }
 }

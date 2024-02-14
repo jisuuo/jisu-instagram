@@ -11,6 +11,7 @@ import { User } from '../user/entities/user.entity';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcryptjs';
 import { LoginUserDto } from './dto/login-user.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 @Injectable()
 export class AuthService {
@@ -247,5 +248,24 @@ export class AuthService {
     });
 
     return this.loginUser(newUser);
+  }
+
+  async changePassword(email: string, changePasswordDto: ChangePasswordDto) {
+    /**
+     * 본인인증했을 시 기존 패스워드는 없애고 새로운 비밀번호로 업데이트
+     * 1.이메일 인증
+     * 2.본인인증 한 이메일로 아이디를 확인
+     * 3.유저 있을시 유저의 비밀번호를 새로운 비밀번호 입력값으로 업데이트
+     *
+     **/
+    const existingUser = await this.userService.getUserByEmail(email);
+    if (!existingUser) {
+      throw new NotFoundException('등록된 유저가 아닙니다');
+    }
+    const user = await this.userService.changePassword(
+      existingUser.id,
+      changePasswordDto.confirmPassword,
+    );
+    return user;
   }
 }

@@ -29,7 +29,7 @@ import { ConfigModule } from '@nestjs/config';
         JWT_REFRESH_TOKEN_EXPIRATION_TIME: Joi.string().required(),
 
         JWT_ACCESS_TOKEN_SECRET: Joi.string().required(),
-        JWT_ACCESS_TOKEN_EXPRIATION_TIME: Joi.string().required(),
+        JWT_ACCESS_TOKEN_EXPIRATION_TIME: Joi.string().required(),
       }),
     }),
   ],

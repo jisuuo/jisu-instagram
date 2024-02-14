@@ -3,8 +3,13 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, VerifyCallback } from 'passport-google-oauth2';
 import { ConfigService } from '@nestjs/config';
 import { UserService } from '../../user/user.service';
+import { ProviderEnum } from '../../user/entities/provider.enum';
+
 @Injectable()
-export class GoogleUserStrategy extends PassportStrategy(Strategy) {
+export class GoogleUserStrategy extends PassportStrategy(
+  Strategy,
+  ProviderEnum.GOOGLE,
+) {
   constructor(
     private configService: ConfigService,
     private readonly userService: UserService,
@@ -22,29 +27,23 @@ export class GoogleUserStrategy extends PassportStrategy(Strategy) {
     profile: any,
     done: VerifyCallback,
   ): Promise<any> {
-    console.log('++++++++++1111111111111++');
+    //done(null, profile);
     const { provider, displayName, email, picture } = profile;
     try {
-      const user = await this.userService.getUserByEmail(email);
-      console.log('++++++++++11111111++');
+      const user = await this.userService.getUserByEmails(email);
       if (user.provider !== provider) {
-        console.log('+++++++++++1111+');
         throw new HttpException('Not Matched Provider', HttpStatus.CONFLICT);
       }
-      console.log('++++++++++aaaaaaaaaaaaaa++');
       done(null, user);
-      console.log('++++++++++aaaaaaaaa111111aaaaa++');
     } catch (err) {
       if (err.status === 404) {
         // 회원가입 프로세스
-        console.log('++++++++++aaaaaaaaaaaaaa++');
         const newUser = await this.userService.createSocialUser({
           email,
-          username: displayName,
+          name: displayName,
           profileImg: picture,
           provider,
         });
-        console.log('++++++++++++');
         done(null, newUser);
       }
     }

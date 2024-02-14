@@ -17,14 +17,18 @@ export class User extends BaseEntity {
   public email: string;
 
   // 유저 이름
-  @Column()
+  @Column({
+    nullable: true,
+  })
   @ApiProperty()
-  public name: string;
+  public name?: string;
 
   // 유저 비밀번호
-  @Column()
+  @Column({
+    nullable: true,
+  })
   @ApiProperty()
-  public password: string;
+  public password?: string;
 
   @Column({
     nullable: true,
@@ -51,14 +55,18 @@ export class User extends BaseEntity {
   }
 
   // 유저 닉네임
-  @Column()
+  @Column({
+    nullable: true,
+  })
   @ApiProperty()
-  public nickname: string;
+  public nickname?: string;
 
   // 유저 휴대폰번호
-  @Column()
+  @Column({
+    nullable: true,
+  })
   @ApiProperty()
-  public phone: string;
+  public phone?: string;
 
   // 유저 가입경로 [이메일, 구글, 카카오, 네이버]
   @Column({
