@@ -25,6 +25,11 @@ import { ConfigModule } from '@nestjs/config';
         GOOGLE_AUTH_CLIENT_SECRET: Joi.string().required(),
         GOOGLE_AUTH_CALLBACK_URL: Joi.string().required(),
 
+        // Naver 설정
+        NAVER_AUTH_CLIENT_ID: Joi.string().required(),
+        NAVER_AUTH_CLIENT_SECRET: Joi.string().required(),
+        NAVER_AUTH_CALLBACK_URL: Joi.string().required(),
+
         JWT_REFRESH_TOKEN_SECRET: Joi.string().required(),
         JWT_REFRESH_TOKEN_EXPIRATION_TIME: Joi.string().required(),
 

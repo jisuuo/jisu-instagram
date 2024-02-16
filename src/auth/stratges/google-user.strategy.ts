@@ -3,13 +3,9 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, VerifyCallback } from 'passport-google-oauth2';
 import { ConfigService } from '@nestjs/config';
 import { UserService } from '../../user/user.service';
-import { ProviderEnum } from '../../user/entities/provider.enum';
 
 @Injectable()
-export class GoogleUserStrategy extends PassportStrategy(
-  Strategy,
-  ProviderEnum.GOOGLE,
-) {
+export class GoogleUserStrategy extends PassportStrategy(Strategy) {
   constructor(
     private configService: ConfigService,
     private readonly userService: UserService,

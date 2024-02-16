@@ -22,6 +22,7 @@ import { GoogleUserGuard } from './guard/google-user.guard';
 import { RequestUser } from './interface/request-user.interface';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { use } from 'passport';
+import { NaverUserGuard } from './guard/naver-user.guard';
 
 @Controller('auth')
 @ApiTags('Auth')
@@ -109,6 +110,20 @@ export class AuthController {
   @Get('google/callback')
   @UseGuards(GoogleUserGuard)
   async googleLoginCallback(@Req() req: RequestUser) {
+    const { user } = req;
+    const token = await this.authService.loginUser(user);
+    return token;
+  }
+
+  @Get('login/naver')
+  @UseGuards(NaverUserGuard)
+  async naverLogin() {
+    return HttpStatus.OK;
+  }
+
+  @Get('naver/callback')
+  @UseGuards(NaverUserGuard)
+  async naverLoginCallback(@Req() req: RequestUser) {
     const { user } = req;
     const token = await this.authService.loginUser(user);
     return token;
