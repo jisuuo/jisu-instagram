@@ -9,10 +9,12 @@ import { diskStorage } from 'multer';
 import { format } from 'light-date';
 import * as fs from 'fs';
 import { extname } from 'path';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),
+    AuthModule,
     ConfigModule,
     MulterModule.registerAsync({
       imports: [ConfigModule],

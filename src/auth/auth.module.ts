@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { UserModule } from '../user/user.module';
@@ -7,9 +7,15 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule } from '@nestjs/config';
 import { GoogleUserStrategy } from './stratges/google-user.strategy';
 import { NaverUserStrategy } from './stratges/naver-user.strategy';
+import { EmailModule } from '../email/email.module';
 
 @Module({
-  imports: [UserModule, JwtModule.register({}), ConfigModule],
+  imports: [
+    forwardRef(() => UserModule),
+    JwtModule.register({}),
+    ConfigModule,
+    EmailModule,
+  ],
   controllers: [AuthController],
   providers: [
     AuthService,
@@ -17,5 +23,6 @@ import { NaverUserStrategy } from './stratges/naver-user.strategy';
     GoogleUserStrategy,
     NaverUserStrategy,
   ],
+  exports: [AuthService],
 })
 export class AuthModule {}

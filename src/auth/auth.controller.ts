@@ -2,11 +2,11 @@ import {
   Body,
   Controller,
   Get,
-  Post,
   Headers,
-  UseGuards,
   HttpStatus,
+  Post,
   Req,
+  UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import {
@@ -21,7 +21,6 @@ import { RefreshTokenGuard } from './guard/bearer-token.guard';
 import { GoogleUserGuard } from './guard/google-user.guard';
 import { RequestUser } from './interface/request-user.interface';
 import { ChangePasswordDto } from './dto/change-password.dto';
-import { use } from 'passport';
 import { NaverUserGuard } from './guard/naver-user.guard';
 
 @Controller('auth')
@@ -81,8 +80,10 @@ export class AuthController {
   @ApiOperation({
     summary: '유저 이메일 가입',
   })
-  registerEmail(@Body() createUserDto: CreateUserDto) {
-    return this.authService.registerWithEmail(createUserDto);
+  async registerEmail(@Body() createUserDto: CreateUserDto) {
+    const newUser = this.authService.registerWithEmail(createUserDto);
+    await this.authService.sendVerificationLink(createUserDto.email);
+    return newUser;
   }
 
   // 유저 프로필 가져오기 [1명, by userId]
@@ -103,12 +104,18 @@ export class AuthController {
   }
   @Get('login/google')
   @UseGuards(GoogleUserGuard)
+  @ApiOperation({
+    summary: '구글 소셜 로그인',
+  })
   async googleLogin() {
     return HttpStatus.OK;
   }
 
   @Get('google/callback')
   @UseGuards(GoogleUserGuard)
+  @ApiOperation({
+    summary: '구글 소셜 로그인 콜백',
+  })
   async googleLoginCallback(@Req() req: RequestUser) {
     const { user } = req;
     const token = await this.authService.loginUser(user);
@@ -117,12 +124,18 @@ export class AuthController {
 
   @Get('login/naver')
   @UseGuards(NaverUserGuard)
+  @ApiOperation({
+    summary: '네이버 소셜 로그인',
+  })
   async naverLogin() {
     return HttpStatus.OK;
   }
 
   @Get('naver/callback')
   @UseGuards(NaverUserGuard)
+  @ApiOperation({
+    summary: '네이버 소셜 로그인 콜백',
+  })
   async naverLoginCallback(@Req() req: RequestUser) {
     const { user } = req;
     const token = await this.authService.loginUser(user);
@@ -130,10 +143,32 @@ export class AuthController {
   }
 
   @Post('change-password')
+  @ApiOperation({
+    summary: '로그인 후 비밀번호 변경',
+  })
   async ChangeNewPassword(
     @Body('email') email: string,
     @Body() changePasswordDto: ChangePasswordDto,
   ) {
     return await this.authService.changePassword(email, changePasswordDto);
+  }
+
+  @Post('email/verify')
+  @ApiOperation({
+    summary: '이메일 본인인증',
+  })
+  async verifyEmail(@Body('token') token: string) {
+    const { email, password } = this.authService.decodeBasicToken(token);
+    const user = await this.authService.findUser({
+      email,
+      password,
+    });
+
+    if (!user) {
+      return await this.authService.loginWithEmail({
+        email,
+        password,
+      });
+    }
   }
 }

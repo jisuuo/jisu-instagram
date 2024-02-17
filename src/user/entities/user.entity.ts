@@ -34,7 +34,7 @@ export class User extends BaseEntity {
     nullable: true,
   })
   @ApiProperty()
-  public profileImg: string;
+  public profileImg?: string;
 
   @BeforeInsert()
   async processUserCredentials() {
@@ -52,6 +52,12 @@ export class User extends BaseEntity {
     } catch (err) {
       throw new InternalServerErrorException();
     }
+  }
+
+  async hashPassword(newPassword: string): Promise<string> {
+    const saltValue = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(newPassword, saltValue);
+    return this.password;
   }
 
   // 유저 닉네임
@@ -76,6 +82,11 @@ export class User extends BaseEntity {
   })
   @ApiProperty()
   public provider: ProviderEnum;
+
+  @Column({
+    default: false,
+  })
+  public isVerified: boolean;
 
   async checkPassword(inputPassword: string): Promise<boolean> {
     try {

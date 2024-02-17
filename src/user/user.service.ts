@@ -80,6 +80,7 @@ export class UserService {
     return existUser;
   }
 
+  // 유저 찾기
   async getUserByEmail(email: string) {
     return await this.userRepository.findOne({
       where: {
@@ -88,7 +89,8 @@ export class UserService {
     });
   }
 
-  async getUserByEmails(email: string) {
+  // 유저 찾기
+  async findUser(email: string) {
     const user = await this.userRepository.findOneBy({ email });
     if (user) return user;
     throw new HttpException('Not found', HttpStatus.NOT_FOUND);
@@ -109,9 +111,65 @@ export class UserService {
     return updateUser;
   }
 
+  // 유저 ID로 찾기
   async getUserById(userId: string) {
     const user = await this.userRepository.findOneBy({ id: userId });
     if (user) return user;
     throw new HttpException('Not found', HttpStatus.NOT_FOUND);
+  }
+
+  // 본인 인증 처리
+  async markIsVerify(email: string) {
+    const user = await this.findUser(email);
+    if (!user) {
+      throw new NotFoundException('유저를 찾을 수 없습니다!');
+    }
+    return await this.userRepository.update(
+      { email },
+      {
+        isVerified: true,
+      },
+    );
+  }
+
+  // 프로필 이미지 수정
+  async updateProfileImg(userId: string, profileImg: string) {
+    return await this.userRepository.update(
+      {
+        id: userId,
+      },
+      {
+        profileImg,
+      },
+    );
+  }
+
+  // 프로필 비밀번호, 닉네임, 이미지 수정
+  async updateProfile(
+    id: string,
+    password?: string,
+    nickname?: string,
+    profileImg?: string,
+  ) {
+    const user = await this.getUserById(id);
+
+    if (!user) {
+      throw new NotFoundException('유저가 없습니다!');
+    }
+
+    if (password) {
+      user.password = await user.hashPassword(password);
+    }
+
+    if (nickname) {
+      user.nickname = nickname;
+    }
+
+    if (profileImg) {
+      user.profileImg = profileImg;
+    }
+
+    const newUser = await this.userRepository.save(user);
+    return newUser;
   }
 }

@@ -29,7 +29,7 @@ export class NaverUserStrategy extends PassportStrategy(Strategy) {
     //done(null, profile);
     try {
       // 이메일 유무 확인
-      const user = await this.userService.getUserByEmails(email);
+      const user = await this.userService.findUser(email);
       // 이메일 있으면 provider 체크
       if (user.provider !== provider) {
       }
