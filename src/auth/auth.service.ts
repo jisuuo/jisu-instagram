@@ -336,7 +336,7 @@ export class AuthService {
         <body>
             <div style="text-align: center;">
                     <h2>새로운 비밀번호</h2>
-                    <p>새로운 비밀번호를 입력하여 로그인해주세요!</p>
+                    <p>새로운 비밀번호를 입력하여 로그인해주세요!npm install @compodoc/compodoc</p>
                     <a href = "" style="display: inline-block; padding: 10px 20px;  background-color: #0056b3;; color: #fff; text-decoration: none; border-radius: 5px;">${newPassword}</a>
             </div>
         </body>
@@ -365,11 +365,10 @@ export class AuthService {
   // 본인인증 이메일 전송
   async sendVerificationLink(email: string) {
     const payload: VerifyPayloadInterface = { email };
-    const token = this.jwtService.sign(payload, {
+    this.jwtService.sign(payload, {
       secret: this.configService.get('VERIFICATION_TOKEN_SECRET'),
       expiresIn: this.configService.get('VERIFICATION_TOKEN_EXPIRATION_TIME'),
     });
-
     const htmlTemplate = `
         <!DOCTYPE html>
         <html lang="en">
