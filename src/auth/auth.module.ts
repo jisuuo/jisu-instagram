@@ -8,6 +8,7 @@ import { ConfigModule } from '@nestjs/config';
 import { GoogleUserStrategy } from './stratges/google-user.strategy';
 import { NaverUserStrategy } from './stratges/naver-user.strategy';
 import { EmailModule } from '../email/email.module';
+import { RedisModule } from '../redis/redis.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { EmailModule } from '../email/email.module';
     JwtModule.register({}),
     ConfigModule,
     EmailModule,
+    RedisModule,
   ],
   controllers: [AuthController],
   providers: [

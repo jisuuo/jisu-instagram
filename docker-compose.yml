@@ -14,6 +14,7 @@ services:
       - '8000:8000'
     depends_on:
       - postgres
+      - redis
     networks:
       - jisu-network
 
@@ -24,6 +25,16 @@ services:
       - "5432:5432"
     env_file:
       - docker.env
+    networks:
+      - jisu-network
+
+  redis:
+    container_name: redis
+    image: "redis:alpine"
+    env_file:
+      - .env
+    ports:
+      - "6379:6379"
     networks:
       - jisu-network
 

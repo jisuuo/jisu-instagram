@@ -14,6 +14,11 @@ import { ConfigModule } from '@nestjs/config';
         POSTGRES_PASSWORD: Joi.string().required(),
         POSTGRES_DB: Joi.string().required(),
 
+        // Redis 설정
+        REDIS_HOST: Joi.string().required(),
+        REDIS_PORT: Joi.number().required(),
+        REDIS_TTL: Joi.number().required(),
+
         // Multer 설정 [파일 업로드]
         ATTACH_SAVE_PATH: Joi.string().required(),
 

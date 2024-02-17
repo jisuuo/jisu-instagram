@@ -114,7 +114,7 @@ export class UserService {
     if (!emailUser) {
       const phoneUser = await this.findUserByPhone(userInfo);
       if (!phoneUser) {
-        throw new NotFoundException('등록된 유저가 앖습니다!');
+        throw new NotFoundException('등록된 유저가 없습니다!');
       }
       return phoneUser;
     }
@@ -133,6 +133,17 @@ export class UserService {
       { password: user.password },
     );
     const updateUser = await this.userRepository.findOneBy({ id: userId });
+    return updateUser;
+  }
+
+  async changePasswordByEmail(email: string, confirmPassword: string) {
+    const user = await this.userRepository.findOneBy({ email });
+
+    const saltValue = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(confirmPassword, saltValue);
+
+    await this.userRepository.update({ email }, { password: user.password });
+    const updateUser = await this.userRepository.findOneBy({ email });
     return updateUser;
   }
 

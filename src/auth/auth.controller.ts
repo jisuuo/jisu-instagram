@@ -4,6 +4,7 @@ import {
   Get,
   Headers,
   HttpStatus,
+  Param,
   Post,
   Req,
   UseGuards,
@@ -159,6 +160,14 @@ export class AuthController {
   })
   async resetPassword(@Body('userInfo') userInfo: string) {
     return await this.authService.resetPassword(userInfo);
+  }
+
+  @Post(`send/email/reset-password/new-password/:email`)
+  async resetNewPassword(
+    @Param('email') email: string,
+    @Body('otp') otp: string,
+  ) {
+    return await this.authService.confirmOTP(email, otp);
   }
 
   @Post('email/verify')

@@ -6,6 +6,7 @@ import { DatabaseModule } from './database/database.module';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { EmailModule } from './email/email.module';
+import { RedisModule } from './redis/redis.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { EmailModule } from './email/email.module';
     UserModule,
     forwardRef(() => AuthModule),
     EmailModule,
+    RedisModule,
   ],
   controllers: [AppController],
   providers: [AppService],

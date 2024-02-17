@@ -1,6 +1,5 @@
 import {
   BadRequestException,
-  forwardRef,
   Inject,
   Injectable,
   NotFoundException,
@@ -17,6 +16,8 @@ import { LoginUserDto } from './dto/login-user.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { VerifyPayloadInterface } from './interface/verify-payload.interface';
 import { EmailService } from '../email/email.service';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
 
 @Injectable()
 export class AuthService {
@@ -25,6 +26,7 @@ export class AuthService {
     private readonly userService: UserService,
     private readonly configService: ConfigService,
     private readonly emailService: EmailService,
+    @Inject(CACHE_MANAGER) private cacheManger: Cache,
   ) {}
 
   /**
@@ -279,9 +281,8 @@ export class AuthService {
     const existingUserEmail =
       await this.userService.findUserForPasswordReset(userInfo);
 
-    console.log(existingUserEmail);
-
     const generateNumber = this.generateOTP();
+    await this.cacheManger.set(existingUserEmail, generateNumber);
 
     const otpTemplate = `
         <!DOCTYPE html>
@@ -297,20 +298,6 @@ export class AuthService {
                     <p>아래 인증번호를 확인하여 사이트에 입력해주세요.</p>
                     <a href = "" style="display: inline-block; padding: 10px 20px;  background-color: #0056b3;; color: #fff; text-decoration: none; border-radius: 5px;">${generateNumber}</a>
             </div>
-<!--             <script>-->
-<!--               import axios from "axios"; -->
-<!--               async function handleVerification(event) {-->
-<!--                event.preventDefault(); // 기본 동작(링크 이동)을 막습니다.-->
-<!--                try {-->
-<!--                  const response = await axios.get('http://localhost/api/auth/email/verify');-->
-<!--                  console.log('이메일 인증 완료');-->
-<!--                  //alert("이메일 인증이 완료되었습니다.");-->
-<!--                } catch (error) {-->
-<!--                  console.error('인증 오류:', error);-->
-<!--                  //alert("이메일 인증에 실패했습니다.");-->
-<!--                }-->
-<!--              }-->
-<!--           </script>-->
         </body>
         </html>
     `; //onclick="ha
@@ -323,6 +310,56 @@ export class AuthService {
       });
     }
     return 'Check Your Email';
+  }
+
+  async confirmOTP(email: string, otp: string) {
+    // redis 모듈에 있는 otp 값과 비교
+    const existingUserEmail =
+      await this.userService.findUserForPasswordReset(email);
+    if (!existingUserEmail) {
+      throw new NotFoundException('유저가 없습니다!');
+    }
+
+    const cacheOTP = await this.cacheManger.get(email);
+    const newPassword = await this.generateNewPassword();
+
+    // 맞다면 새로운 비밀번호 초기화 값 주기!
+    if (cacheOTP == otp) {
+      const otpTemplate = `
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Email Verification</title>
+        </head>
+        <body>
+            <div style="text-align: center;">
+                    <h2>새로운 비밀번호</h2>
+                    <p>새로운 비밀번호를 입력하여 로그인해주세요!</p>
+                    <a href = "" style="display: inline-block; padding: 10px 20px;  background-color: #0056b3;; color: #fff; text-decoration: none; border-radius: 5px;">${newPassword}</a>
+            </div>
+        </body>
+        </html>
+    `; //onclick="ha
+
+      if (existingUserEmail) {
+        await this.emailService.sendMail({
+          to: existingUserEmail,
+          subject: '이메일 본인 인증',
+          html: otpTemplate,
+        });
+      }
+    }
+
+    // 기존 비밀번호 새로운 비밀번호 업데이트
+    const resetPassword = await this.userService.changePasswordByEmail(
+      email,
+      newPassword,
+    );
+    // redis otp 제거
+    await this.cacheManger.del(email);
+    return resetPassword;
   }
 
   // 본인인증 이메일 전송
@@ -385,6 +422,17 @@ export class AuthService {
     let OTP = '';
     for (let i = 1; i <= 6; i++) {
       OTP += Math.floor(Math.random() * 10);
+    }
+    return OTP;
+  }
+
+  async generateNewPassword() {
+    const characters =
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let OTP = '';
+    const charactersLength = characters.length;
+    for (let i = 0; i < 10; i++) {
+      OTP += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
     return OTP;
   }
