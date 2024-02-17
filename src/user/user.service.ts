@@ -90,10 +90,35 @@ export class UserService {
   }
 
   // 유저 찾기
-  async findUser(email: string) {
+  async findUserByEmail(email: string) {
     const user = await this.userRepository.findOneBy({ email });
     if (user) return user;
     throw new HttpException('Not found', HttpStatus.NOT_FOUND);
+  }
+
+  async findUserByNickname(nickname: string) {
+    const user = await this.userRepository.findOneBy({ nickname });
+    if (user) return user.email;
+    throw new HttpException('Not found', HttpStatus.NOT_FOUND);
+  }
+
+  async findUserByPhone(phone: string) {
+    const user = await this.userRepository.findOneBy({ phone });
+    if (user) return user.email;
+    throw new HttpException('Not found', HttpStatus.NOT_FOUND);
+  }
+
+  async findUserForPasswordReset(userInfo: string) {
+    const emailUser = await this.findUserByEmail(userInfo);
+    console.log(emailUser);
+    if (!emailUser) {
+      const phoneUser = await this.findUserByPhone(userInfo);
+      if (!phoneUser) {
+        throw new NotFoundException('등록된 유저가 앖습니다!');
+      }
+      return phoneUser;
+    }
+    return emailUser.email;
   }
 
   // 비밀번호 변경
@@ -120,7 +145,7 @@ export class UserService {
 
   // 본인 인증 처리
   async markIsVerify(email: string) {
-    const user = await this.findUser(email);
+    const user = await this.findUserByEmail(email);
     if (!user) {
       throw new NotFoundException('유저를 찾을 수 없습니다!');
     }

@@ -275,6 +275,56 @@ export class AuthService {
     return user;
   }
 
+  async resetPassword(userInfo: string) {
+    const existingUserEmail =
+      await this.userService.findUserForPasswordReset(userInfo);
+
+    console.log(existingUserEmail);
+
+    const generateNumber = this.generateOTP();
+
+    const otpTemplate = `
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Email Verification</title>
+        </head>
+        <body>
+            <div style="text-align: center;">
+                    <h2>비밀번호 초기화 인증번호</h2>
+                    <p>아래 인증번호를 확인하여 사이트에 입력해주세요.</p>
+                    <a href = "" style="display: inline-block; padding: 10px 20px;  background-color: #0056b3;; color: #fff; text-decoration: none; border-radius: 5px;">${generateNumber}</a>
+            </div>
+<!--             <script>-->
+<!--               import axios from "axios"; -->
+<!--               async function handleVerification(event) {-->
+<!--                event.preventDefault(); // 기본 동작(링크 이동)을 막습니다.-->
+<!--                try {-->
+<!--                  const response = await axios.get('http://localhost/api/auth/email/verify');-->
+<!--                  console.log('이메일 인증 완료');-->
+<!--                  //alert("이메일 인증이 완료되었습니다.");-->
+<!--                } catch (error) {-->
+<!--                  console.error('인증 오류:', error);-->
+<!--                  //alert("이메일 인증에 실패했습니다.");-->
+<!--                }-->
+<!--              }-->
+<!--           </script>-->
+        </body>
+        </html>
+    `; //onclick="ha
+
+    if (existingUserEmail) {
+      await this.emailService.sendMail({
+        to: existingUserEmail,
+        subject: '이메일 본인 인증',
+        html: otpTemplate,
+      });
+    }
+    return 'Check Your Email';
+  }
+
   // 본인인증 이메일 전송
   async sendVerificationLink(email: string) {
     const payload: VerifyPayloadInterface = { email };
@@ -324,10 +374,18 @@ export class AuthService {
   }
 
   async verifyEmail(email: string) {
-    const user = await this.userService.findUser(email);
+    const user = await this.userService.findUserByEmail(email);
     if (user.isVerified) {
       throw new BadRequestException('Email already Confirm');
     }
     await this.userService.markIsVerify(email);
+  }
+
+  generateOTP() {
+    let OTP = '';
+    for (let i = 1; i <= 6; i++) {
+      OTP += Math.floor(Math.random() * 10);
+    }
+    return OTP;
   }
 }

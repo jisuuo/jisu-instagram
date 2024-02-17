@@ -146,11 +146,19 @@ export class AuthController {
   @ApiOperation({
     summary: '로그인 후 비밀번호 변경',
   })
-  async ChangeNewPassword(
+  async changePassword(
     @Body('email') email: string,
     @Body() changePasswordDto: ChangePasswordDto,
   ) {
     return await this.authService.changePassword(email, changePasswordDto);
+  }
+
+  @Post('send/email/reset-password')
+  @ApiOperation({
+    summary: '로그인 전 비밀번호 초기화',
+  })
+  async resetPassword(@Body('userInfo') userInfo: string) {
+    return await this.authService.resetPassword(userInfo);
   }
 
   @Post('email/verify')

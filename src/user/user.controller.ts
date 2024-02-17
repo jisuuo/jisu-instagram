@@ -27,7 +27,6 @@ export class UserController {
   @ApiOperation({
     summary: '유저 프로필 이미지 업로드',
   })
-  @ApiCreatedResponse({ description: '유저 프로필 이미지 업로드' })
   @UseInterceptors(FileInterceptor('file'))
   @UseGuards(AccessTokenGuard)
   async uploadProfileImg(
@@ -54,6 +53,9 @@ export class UserController {
 
   // 프로필 업데이트
   @Post('update/profile/:id')
+  @ApiOperation({
+    summary: '유저 프로필 정보 수정',
+  })
   @UseGuards(AccessTokenGuard)
   @UseInterceptors(FileInterceptor('file'))
   @ApiCreatedResponse({ description: '유저 프로필 수정' })
