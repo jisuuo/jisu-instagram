@@ -407,10 +407,14 @@ export class AuthService {
             <title>Email Verification</title>
         </head>
         <body>
-            <div style="text-align: center;">
-                    <h2>이메일 본인 인증</h2>
-                    <p>아래 버튼을 클릭하여 이메일 인증을 완료하세요.</p>
-                    <a href="http://localhost:8000/api/auth/email/verify${token}"  style="display: inline-block; padding: 10px 20px; background-color: #007bff; color: #fff; text-decoration: none; border-radius: 5px;">본인 인증</a>
+        <div style="text-align: center;">
+            <form method="post" action="http://localhost:8000/api/auth/email/verify" class="inline">
+            <input type="hidden" name="token" value="${token}">
+            <button type="submit" name="submit_param" value="${token}" class="link-button">
+              본인인증
+            </button>
+            </form>
+                  
             </div>
              <script>
                import axios from "axios"; 
@@ -432,9 +436,8 @@ export class AuthService {
     await this.emailService.sendMail({
       to: email,
       subject: '이메일 본인 인증',
-      //text: `이메일 인증 인증번호${OTP}`,
-      //html: htmlTemplate,
-      text: `http://localhost:8000/api/auth/email/verify/${token}`,
+      html: htmlTemplate,
+      //text: `http://localhost:8000/api/auth/email/verify/${token}`,
     });
     return 'Please Check your email';
   }
