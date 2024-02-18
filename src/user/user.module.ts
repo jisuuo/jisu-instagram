@@ -10,10 +10,11 @@ import { format } from 'light-date';
 import * as fs from 'fs';
 import { extname } from 'path';
 import { AuthModule } from '../auth/auth.module';
+import { Privacy } from './entities/privacy.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User, Privacy]),
     AuthModule,
     ConfigModule,
     MulterModule.registerAsync({

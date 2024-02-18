@@ -881,8 +881,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="429"
-                                    class="link-to-prism">src/auth/auth.service.ts:429</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="428"
+                                    class="link-to-prism">src/auth/auth.service.ts:428</a></div>
                         </td>
                     </tr>
 
@@ -918,8 +918,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="421"
-                                    class="link-to-prism">src/auth/auth.service.ts:421</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="420"
+                                    class="link-to-prism">src/auth/auth.service.ts:420</a></div>
                         </td>
                     </tr>
 
@@ -1529,8 +1529,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="413"
-                                    class="link-to-prism">src/auth/auth.service.ts:413</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="412"
+                                    class="link-to-prism">src/auth/auth.service.ts:412</a></div>
                         </td>
                     </tr>
 
@@ -2016,11 +2016,10 @@ export class AuthService {
   // 본인인증 이메일 전송
   async sendVerificationLink(email: string) {
     const payload: VerifyPayloadInterface &#x3D; { email };
-    const token &#x3D; this.jwtService.sign(payload, {
+    this.jwtService.sign(payload, {
       secret: this.configService.get(&#x27;VERIFICATION_TOKEN_SECRET&#x27;),
       expiresIn: this.configService.get(&#x27;VERIFICATION_TOKEN_EXPIRATION_TIME&#x27;),
     });
-
     const htmlTemplate &#x3D; &#x60;
         &lt;!DOCTYPE html&gt;
         &lt;html lang&#x3D;&quot;en&quot;&gt;

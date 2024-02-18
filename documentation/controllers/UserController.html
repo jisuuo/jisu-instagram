@@ -215,8 +215,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="62"
-                                    class="link-to-prism">src/user/user.controller.ts:62</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="61"
+                                    class="link-to-prism">src/user/user.controller.ts:61</a></div>
                         </td>
                     </tr>
 
@@ -435,7 +435,6 @@ export class UserController {
     return imgInfo;
   }
 
-  // 프로필 업데이트
   @Post(&#x27;update/profile/:id&#x27;)
   @ApiOperation({
     summary: &#x27;유저 프로필 정보 수정&#x27;,
@@ -450,22 +449,25 @@ export class UserController {
   ) {
     const { user } &#x3D; req;
 
-    const diskPath &#x3D; file.path.replace(
-      this.configService.get(&#x27;ATTACH_SAVE_PATH&#x27;),
-      &#x27;&#x27;,
-    );
+    let imgPath: string;
 
-    const imgInfo &#x3D; {
-      fileName: file.originalname,
-      path: diskPath.replace(/\\/gi, &#x27;/&#x27;) ?? user.profileImg,
-      size: file.size,
-    };
+    /// 파일이 있는 경우
+    if (file) {
+      const diskPath &#x3D; file.path.replace(
+        this.configService.get(&#x27;ATTACH_SAVE_PATH&#x27;),
+        &#x27;&#x27;,
+      );
+      imgPath &#x3D; diskPath.replace(/\\/gi, &#x27;/&#x27;);
+      /// 파일이 없는 경우
+    } else {
+      imgPath &#x3D; user.profileImg;
+    }
 
     return await this.userService.updateProfile(
       user.id,
       updateUserDto.password,
       updateUserDto.nickname,
-      imgInfo.path,
+      imgPath,
     );
   }
 }

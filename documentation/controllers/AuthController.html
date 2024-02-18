@@ -217,6 +217,7 @@
                             </li>
                             <li>
                                     <span class="modifier"></span>
+                                    <span class="modifier"></span>
                                     <span class="modifier">Async</span>
                                 <a href="#resetNewPassword" >resetNewPassword</a>
                             </li>
@@ -996,6 +997,7 @@
                     <a name="resetNewPassword"></a>
                     <span class="name">
                             <span class="modifier"></span>
+                            <span class="modifier"></span>
                             <span class="modifier">Async</span>
                         <span ><b>resetNewPassword</b></span>
                         <a href="#resetNewPassword"><span class="icon ion-ios-link"></span></a>
@@ -1013,14 +1015,14 @@
                 <td class="col-md-4">
                     <b>Decorators : </b>
                     <br />
-                    <code>@Post(send/email/reset-password/new-password/:email)<br /></code>
+                    <code>@Post(send/email/reset-password/new-password/:email)<br />@ApiOperation({summary: &#x27;비밀번호 초기화 이메일 전송&#x27;})<br /></code>
                 </td>
             </tr>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="166"
-                                    class="link-to-prism">src/auth/auth.controller.ts:166</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="169"
+                                    class="link-to-prism">src/auth/auth.controller.ts:169</a></div>
                         </td>
                     </tr>
 
@@ -1187,8 +1189,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="177"
-                                    class="link-to-prism">src/auth/auth.controller.ts:177</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="180"
+                                    class="link-to-prism">src/auth/auth.controller.ts:180</a></div>
                         </td>
                     </tr>
 
@@ -1403,6 +1405,9 @@ export class AuthController {
   }
 
   @Post(&#x60;send/email/reset-password/new-password/:email&#x60;)
+  @ApiOperation({
+    summary: &#x27;비밀번호 초기화 이메일 전송&#x27;,
+  })
   async resetNewPassword(
     @Param(&#x27;email&#x27;) email: string,
     @Body(&#x27;otp&#x27;) otp: string,

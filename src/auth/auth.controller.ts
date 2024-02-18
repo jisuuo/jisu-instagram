@@ -119,6 +119,7 @@ export class AuthController {
   })
   async googleLoginCallback(@Req() req: RequestUser) {
     const { user } = req;
+    console.log(user);
     const token = await this.authService.loginUser(user);
     return token;
   }
@@ -163,6 +164,9 @@ export class AuthController {
   }
 
   @Post(`send/email/reset-password/new-password/:email`)
+  @ApiOperation({
+    summary: '비밀번호 초기화 이메일 전송',
+  })
   async resetNewPassword(
     @Param('email') email: string,
     @Body('otp') otp: string,
@@ -170,7 +174,7 @@ export class AuthController {
     return await this.authService.confirmOTP(email, otp);
   }
 
-  @Post('email/verify')
+  @Post('/email/verify')
   @ApiOperation({
     summary: '이메일 본인인증',
   })
@@ -189,3 +193,7 @@ export class AuthController {
     }
   }
 }
+
+// 1. 회원가입과 동시 email verification 전송
+// 2. Token을 담아서 보냄
+// 3. token을 풀어서 token안에 email 찾아서 업데이트 (isMark)
