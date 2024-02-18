@@ -9,20 +9,20 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { AuthService } from './auth.service';
 import {
   ApiCreatedResponse,
   ApiOperation,
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
-import { CreateUserDto } from '../user/dto/create-user.dto';
-import { BasicTokenGuard } from './guard/basic-token.guard';
-import { RefreshTokenGuard } from './guard/bearer-token.guard';
-import { GoogleUserGuard } from './guard/google-user.guard';
-import { RequestUser } from './interface/request-user.interface';
-import { ChangePasswordDto } from './dto/change-password.dto';
-import { NaverUserGuard } from './guard/naver-user.guard';
+import { RefreshTokenGuard } from '@auth/guard/bearer-token.guard';
+import { AuthService } from '@auth/auth.service';
+import { BasicTokenGuard } from '@auth/guard/basic-token.guard';
+import { CreateUserDto } from '@user/dto/create-user.dto';
+import { GoogleUserGuard } from '@auth/guard/google-user.guard';
+import { RequestUser } from '@auth/interface/request-user.interface';
+import { NaverUserGuard } from '@auth/guard/naver-user.guard';
+import { ChangePasswordDto } from '@auth/dto/change-password.dto';
 
 @Controller('auth')
 @ApiTags('Auth')
@@ -174,23 +174,14 @@ export class AuthController {
     return await this.authService.confirmOTP(email, otp);
   }
 
-  @Post('/email/verify')
+  @Post('email/verify')
   @ApiOperation({
     summary: '이메일 본인인증',
   })
   async verifyEmail(@Body('token') token: string) {
-    const { email, password } = this.authService.decodeBasicToken(token);
-    const user = await this.authService.findUser({
-      email,
-      password,
-    });
-
-    if (!user) {
-      return await this.authService.loginWithEmail({
-        email,
-        password,
-      });
-    }
+    const email = await this.authService.decodeConfirmationToken(token);
+    await this.authService.confirmEmail(email);
+    return 'Success';
   }
 }
 

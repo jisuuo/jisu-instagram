@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./",
+    "paths": {
+      "@root/*": ["./src/*"],
+      "@user/*": ["./src/user/*"],
+      "@auth/*": ["./src/auth/*"],
+      "@email/*": ["./src/email/*"],
+      "@database/*": ["./src/database/*"],
+      "@redis/*": ["./src/redis/*"],
+      "@config/*": ["./config/*"],
+      "@post/*": ["./post/*"]
+    }
+  }
+}

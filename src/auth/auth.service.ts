@@ -5,19 +5,22 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { UserService } from '../user/user.service';
-import { CreateUserDto } from '../user/dto/create-user.dto';
-import { ProviderEnum } from '../user/entities/provider.enum';
+
 import { JwtService } from '@nestjs/jwt';
-import { User } from '../user/entities/user.entity';
+
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcryptjs';
-import { LoginUserDto } from './dto/login-user.dto';
-import { ChangePasswordDto } from './dto/change-password.dto';
-import { VerifyPayloadInterface } from './interface/verify-payload.interface';
-import { EmailService } from '../email/email.service';
+
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
+import { CreateUserDto } from '@user/dto/create-user.dto';
+import { ProviderEnum } from '@user/entities/provider.enum';
+import { User } from '@user/entities/user.entity';
+import { UserService } from '@user/user.service';
+import { EmailService } from '@email/email.service';
+import { LoginUserDto } from '@auth/dto/login-user.dto';
+import { ChangePasswordDto } from '@auth/dto/change-password.dto';
+import { VerifyPayloadInterface } from '@auth/interface/verify-payload.interface';
 
 @Injectable()
 export class AuthService {
@@ -100,6 +103,24 @@ export class AuthService {
       email,
       password,
     };
+  }
+
+  async decodeConfirmationToken(token: string) {
+    try {
+      console.log(token);
+      const payload = await this.jwtService.verify(token, {
+        secret: this.configService.get('VERIFICATION_TOKEN_SECRET'),
+      });
+      if (typeof payload === 'object' && 'email' in payload) {
+        return payload.email;
+      }
+      throw new BadRequestException();
+    } catch (err) {
+      if (err?.name === 'TokenExpiredError') {
+        throw new BadRequestException('Email confirmation token expired');
+      }
+      throw new BadRequestException('Bad Confirmation token');
+    }
   }
 
   // 토큰 검증
@@ -256,6 +277,14 @@ export class AuthService {
     });
 
     return this.loginUser(newUser);
+  }
+
+  async confirmEmail(email: any) {
+    const user = await this.userService.getUserByEmail(email);
+    if (user.isVerified) {
+      throw new BadRequestException('Email already Confirm');
+    }
+    return await this.userService.markIsVerify(email);
   }
 
   async changePassword(email: string, changePasswordDto: ChangePasswordDto) {

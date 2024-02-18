@@ -1,14 +1,14 @@
 import { forwardRef, Module } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { AuthController } from './auth.controller';
-import { UserModule } from '../user/user.module';
-import { LocalUserStrategy } from './stratges/local-user.strategy';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule } from '@nestjs/config';
-import { GoogleUserStrategy } from './stratges/google-user.strategy';
-import { NaverUserStrategy } from './stratges/naver-user.strategy';
-import { EmailModule } from '../email/email.module';
-import { RedisModule } from '../redis/redis.module';
+import { UserModule } from '@user/user.module';
+import { EmailModule } from '@email/email.module';
+import { RedisModule } from '@redis/redis.module';
+import { AuthController } from '@auth/auth.controller';
+import { AuthService } from '@auth/auth.service';
+import { GoogleUserStrategy } from '@auth/stratges/google-user.strategy';
+import { NaverUserStrategy } from '@auth/stratges/naver-user.strategy';
+import { LocalUserStrategy } from '@auth/stratges/local-user.strategy';
 
 @Module({
   imports: [

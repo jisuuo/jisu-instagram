@@ -1,16 +1,16 @@
 import { Module } from '@nestjs/common';
-import { UserService } from './user.service';
-import { UserController } from './user.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from './entities/user.entity';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MulterModule } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { format } from 'light-date';
 import * as fs from 'fs';
 import { extname } from 'path';
-import { AuthModule } from '../auth/auth.module';
-import { Privacy } from './entities/privacy.entity';
+import { User } from '@user/entities/user.entity';
+import { Privacy } from '@user/entities/privacy.entity';
+import { AuthModule } from '@auth/auth.module';
+import { UserController } from '@user/user.controller';
+import { UserService } from '@user/user.service';
 
 @Module({
   imports: [

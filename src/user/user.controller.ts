@@ -7,13 +7,15 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { UserService } from './user.service';
+
 import { ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { AccessTokenGuard } from '../auth/guard/bearer-token.guard';
-import { RequestUser } from '../auth/interface/request-user.interface';
+
 import { ConfigService } from '@nestjs/config';
+import { UserService } from '@user/user.service';
+import { AccessTokenGuard } from '@auth/guard/bearer-token.guard';
+import { RequestUser } from '@auth/interface/request-user.interface';
+import { UpdateUserDto } from '@user/dto/update-user.dto';
 
 @Controller('user')
 @ApiTags('User')

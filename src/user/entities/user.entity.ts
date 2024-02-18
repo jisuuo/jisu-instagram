@@ -1,11 +1,11 @@
-import { BaseEntity } from '../../common/base.entity';
 import { BeforeInsert, Column, Entity, OneToOne } from 'typeorm';
 import { ApiProperty, ApiTags } from '@nestjs/swagger';
-import { ProviderEnum } from './provider.enum';
 import * as bcrypt from 'bcryptjs';
 import * as gravatar from 'gravatar';
 import { InternalServerErrorException } from '@nestjs/common';
-import { Privacy } from './privacy.entity';
+import { BaseEntity } from '@root/common/base.entity';
+import { ProviderEnum } from '@user/entities/provider.enum';
+import { Privacy } from '@user/entities/privacy.entity';
 
 @Entity()
 @ApiTags('UserEntity')

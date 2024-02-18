@@ -5,13 +5,14 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateUserDto } from './dto/create-user.dto';
-import { ProviderEnum } from './entities/provider.enum';
-import { CreateSocialUserDto } from './dto/create-social-user.dto';
+
 import * as bcrypt from 'bcryptjs';
+import { User } from '@user/entities/user.entity';
+import { CreateUserDto } from '@user/dto/create-user.dto';
+import { ProviderEnum } from '@user/entities/provider.enum';
+import { CreateSocialUserDto } from '@user/dto/create-social-user.dto';
 
 @Injectable()
 export class UserService {
@@ -160,12 +161,13 @@ export class UserService {
     if (!user) {
       throw new NotFoundException('유저를 찾을 수 없습니다!');
     }
-    return await this.userRepository.update(
+    await this.userRepository.update(
       { email },
       {
         isVerified: true,
       },
     );
+    return user;
   }
 
   // 프로필 이미지 수정
